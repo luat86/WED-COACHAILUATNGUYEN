@@ -307,26 +307,24 @@ const ToolAISection = ({ onConsultClick }: { onConsultClick: () => void }) => {
           {tools.map((tool) => (
             <div 
               key={tool.title}
-              className="bg-white/5 backdrop-blur border border-white/10 p-10 rounded-[2.5rem] hover:bg-white/10 transition-all duration-300 flex flex-col group relative overflow-hidden"
+              className="bg-white/5 backdrop-blur border border-white/10 p-10 rounded-[2.5rem] hover:bg-white/10 transition-all duration-300 flex flex-col group relative overflow-hidden cursor-pointer"
+              onClick={() => window.open(tool.url, '_blank', 'noopener,noreferrer')}
             >
               <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-700 pointer-events-none">
                 {tool.icon}
               </div>
-              <div className="w-20 h-20 bg-blue-500/20 rounded-3xl flex items-center justify-center text-blue-400 mb-8 group-hover:scale-110 transition-transform relative z-10">
+              <div className="w-20 h-20 bg-blue-500/20 rounded-3xl flex items-center justify-center text-blue-400 mb-8 group-hover:scale-110 transition-transform relative z-10 pointer-events-none">
                 {tool.icon}
               </div>
-              <h4 className="text-2xl font-black text-white mb-4 relative z-10">{tool.title}</h4>
-              <p className="text-blue-100/70 text-lg leading-relaxed mb-10 flex-1 relative z-10">
+              <h4 className="text-2xl font-black text-white mb-4 relative z-10 pointer-events-none">{tool.title}</h4>
+              <p className="text-blue-100/70 text-lg leading-relaxed mb-10 flex-1 relative z-10 pointer-events-none">
                 {tool.desc}
               </p>
-              <a 
-                href={tool.url} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="bg-blue-500 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 hover:bg-blue-400 transition-all active:scale-95 text-lg w-full relative z-10 shadow-lg shadow-blue-500/20"
+              <div 
+                className="bg-blue-500 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 group-hover:bg-blue-400 transition-all active:scale-95 text-lg w-full relative z-10 shadow-lg shadow-blue-500/20"
               >
                 Trải nghiệm AI ngay <ChevronRight size={20} />
-              </a>
+              </div>
             </div>
           ))}
         </div>

@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 import { Menu, X, Download, ChevronRight, Check, Zap, BookOpen, User, ArrowRight, BrainCircuit, GraduationCap, Shield, Smartphone, PlayCircle, FileText, CheckCircle, Lock, MessageCircle, Send, Youtube, QrCode, Phone, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+
+const AdminContext = createContext({ isAdmin: false, setIsAdmin: (val: boolean) => {} });
+export const useAdmin = () => useContext(AdminContext);
 
 const Navbar = ({ onConsultClick }: { onConsultClick: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,18 +68,32 @@ const Navbar = ({ onConsultClick }: { onConsultClick: () => void }) => {
 };
 
 const AboutSection = ({ onConsultClick }: { onConsultClick: () => void }) => {
-  const [avatarImage, setAvatarImage] = useState('/Luat.png');
+  const { isAdmin } = useAdmin();
+  const [avatarImage, setAvatarImage] = useState(() => {
+    return localStorage.getItem('avatarImage') || '/Luat.png';
+  });
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleImageClick = () => {
-    fileInputRef.current?.click();
+    if (isAdmin) {
+      fileInputRef.current?.click();
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setAvatarImage(imageUrl);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setAvatarImage(base64String);
+        try {
+          localStorage.setItem('avatarImage', base64String);
+        } catch (e) {
+          console.error("Local storage is full, please clear your browser or upload a smaller file.");
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -182,24 +199,34 @@ const AboutSection = ({ onConsultClick }: { onConsultClick: () => void }) => {
             
             {/* Image container */}
             <div 
-              className="absolute inset-0 rounded-full border-8 border-white overflow-hidden shadow-2xl relative z-10 bg-gray-100 flex items-center justify-center text-gray-300 group cursor-pointer"
+              className={`absolute inset-0 rounded-full border-8 border-white overflow-hidden shadow-2xl relative z-10 bg-gray-100 flex items-center justify-center text-gray-300 ${isAdmin ? 'group cursor-pointer' : ''}`}
               onClick={handleImageClick}
             >
               <img 
                 src={avatarImage} 
                 alt="Chuyên gia Quản lý Dự án & AI Nguyễn Văn Luật" 
-                className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
+                className={`w-full h-full object-cover ${isAdmin ? 'group-hover:opacity-80 transition-opacity' : ''}`}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  if (target.src !== 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=634&auto=format&fit=crop') {
+                    target.src = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=634&auto=format&fit=crop';
+                  }
+                }}
               />
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-white font-medium text-sm text-center">Nhấn để<br/>cập nhật ảnh</span>
-              </div>
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                onChange={handleImageChange} 
-                accept="image/*" 
-                className="hidden" 
-              />
+              {isAdmin && (
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-white font-medium text-sm text-center">Nhấn để<br/>cập nhật ảnh</span>
+                </div>
+              )}
+              {isAdmin && (
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleImageChange} 
+                  accept="image/*" 
+                  className="hidden" 
+                />
+              )}
             </div>
 
             {/* Floating badge 1 */}
@@ -837,6 +864,7 @@ const Footer = () => (
 );
 
 export default function App() {
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
 
@@ -977,8 +1005,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBFBFC] font-sans selection:bg-blue-100 selection:text-blue-700 block relative overflow-hidden">
-      {/* Decorative Background Blobs */}
+    <AdminContext.Provider value={{ isAdmin, setIsAdmin }}>
+      <div className="min-h-screen bg-[#FBFBFC] font-sans selection:bg-blue-100 selection:text-blue-700 block relative overflow-hidden">
+        {/* Decorative Background Blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <motion.div 
           animate={{ scale: [1, 1.1, 1], x: [0, 50, 0], y: [0, 30, 0] }} 
@@ -1086,6 +1115,22 @@ export default function App() {
         )}
       </AnimatePresence>
       <ChatbotWidget />
-    </div>
+
+      {/* Admin Mode Toggle Floating Button */}
+      <div className="fixed bottom-6 left-6 z-50 flex items-center bg-white shadow-xl rounded-full p-2 border border-blue-50 cursor-pointer" onClick={() => setIsAdmin(!isAdmin)}>
+        <button 
+          className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${!isAdmin ? 'bg-gray-100 text-gray-800' : 'text-gray-400 hover:text-gray-600'}`}
+        >
+          Chế độ xem
+        </button>
+        <button 
+          className={`px-4 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${isAdmin ? 'bg-blue-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
+        >
+          {isAdmin && <Check size={14} />} Quản lý
+        </button>
+      </div>
+
+      </div>
+    </AdminContext.Provider>
   );
 }

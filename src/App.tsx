@@ -221,9 +221,11 @@ const AboutSection = ({ onConsultClick }: { onConsultClick: () => void }) => {
                 className={`w-full h-full object-cover ${isAdmin ? 'group-hover:opacity-80 transition-opacity' : ''}`}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  if (target.src !== 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=634&auto=format&fit=crop') {
-                    target.src = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=634&auto=format&fit=crop';
-                  }
+                  target.style.opacity = '0';
+                }}
+                onLoad={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.opacity = '1';
                 }}
               />
               {isAdmin && (

@@ -405,7 +405,7 @@ const ELearningSection = ({ onSelectCourse }: { onSelectCourse: (course: any) =>
           <div 
             key={idx}
             onClick={() => onSelectCourse(course)}
-            className="group bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-blue-900/5 hover:-translate-y-2 transition-all duration-300 cursor-pointer flex flex-col relative"
+            className="group bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-100 hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-2 hover:scale-[1.02] transition-all duration-300 cursor-pointer flex flex-col relative"
           >
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-blue-50/50 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-0" />
             <div className="h-56 overflow-hidden relative z-10">
@@ -415,6 +415,7 @@ const ELearningSection = ({ onSelectCourse }: { onSelectCourse: (course: any) =>
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                 referrerPolicy="no-referrer"
                 loading="lazy"
+                decoding="async"
               />
               <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full text-[10px] font-black text-[#0b3a64] uppercase tracking-widest">
                 {course.level}
@@ -522,7 +523,7 @@ const CourseModal = ({ course, onClose }: { course: any; onClose: () => void }) 
                 <div className="bg-[#0b3a64] text-white p-6 md:p-8 rounded-[2.5rem] sticky top-0 shadow-2xl">
                   <div className="mb-8">
                     <div className="aspect-video relative rounded-2xl overflow-hidden mb-6 shadow-inner">
-                       <img src={course.img} alt={course.title} className="w-full h-full object-cover" />
+                        <img src={course.img} alt={course.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                          <div className="w-14 h-14 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center">
                            <PlayCircle className="text-white" size={32} />
@@ -561,7 +562,7 @@ const CourseModal = ({ course, onClose }: { course: any; onClose: () => void }) 
               <div className="bg-white p-6 rounded-[2rem] border-2 border-gray-100 shadow-xl inline-block w-full">
                 {/* Updated QR image */}
                 <div className="w-full aspect-square bg-[#FBFBFC] border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center mb-6 relative overflow-hidden group">
-                   <img src="/image_5.png" alt="VPBank QR Code" className="w-full h-full object-contain" />
+                   <img src="/image_5.png" alt="VPBank QR Code" className="w-full h-full object-contain" loading="lazy" decoding="async" />
                 </div>
                 <div className="text-sm text-gray-700 space-y-3 text-left">
                   <div className="flex justify-between items-center pb-2 border-b border-gray-50">
@@ -865,8 +866,31 @@ const Footer = () => (
 
 export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showAdminAuth, setShowAdminAuth] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminError, setAdminError] = useState(false);
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
+
+  const handleAdminToggle = () => {
+    if (isAdmin) {
+      setIsAdmin(false);
+    } else {
+      setShowAdminAuth(true);
+      setAdminPassword('');
+      setAdminError(false);
+    }
+  };
+
+  const verifyAdmin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (adminPassword === '090.6381-186') {
+      setIsAdmin(true);
+      setShowAdminAuth(false);
+    } else {
+      setAdminError(true);
+    }
+  };
 
   const handleDownload = () => {
     window.open('https://drive.google.com/drive/folders/1cfMsoRnMQWX1z8JIFIiveL5w5PBv0F1g', '_blank');
@@ -1117,7 +1141,7 @@ export default function App() {
       <ChatbotWidget />
 
       {/* Admin Mode Toggle Floating Button */}
-      <div className="fixed bottom-6 left-6 z-50 flex items-center bg-white shadow-xl rounded-full p-2 border border-blue-50 cursor-pointer" onClick={() => setIsAdmin(!isAdmin)}>
+      <div className="fixed bottom-6 left-6 z-50 flex items-center bg-white shadow-xl rounded-full p-2 border border-blue-50 cursor-pointer" onClick={handleAdminToggle}>
         <button 
           className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${!isAdmin ? 'bg-gray-100 text-gray-800' : 'text-gray-400 hover:text-gray-600'}`}
         >
@@ -1129,6 +1153,59 @@ export default function App() {
           {isAdmin && <Check size={14} />} Quản lý
         </button>
       </div>
+
+      {/* Admin Auth Modal */}
+      <AnimatePresence>
+        {showAdminAuth && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowAdminAuth(false)}
+              className="absolute inset-0 bg-[#0b3a64]/40 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative bg-white w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden border border-gray-100"
+            >
+              <div className="bg-[#0b3a64] p-6 text-white flex justify-between items-center">
+                <h3 className="text-xl font-bold flex items-center gap-2"><Lock size={20} /> Xác thực Quản lý</h3>
+                <button 
+                  onClick={() => setShowAdminAuth(false)}
+                  className="p-1.5 hover:bg-white/10 rounded-full transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="p-6">
+                <form onSubmit={verifyAdmin} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
+                    <input 
+                      type="password" 
+                      value={adminPassword}
+                      onChange={(e) => setAdminPassword(e.target.value)}
+                      className={`w-full px-4 py-3 rounded-xl border ${adminError ? 'border-red-300 focus:ring-red-500' : 'border-gray-200 focus:ring-blue-500'} focus:outline-none focus:ring-2`}
+                      placeholder="Nhập mật khẩu..."
+                      autoFocus
+                    />
+                    {adminError && <p className="text-red-500 text-xs mt-2 mt-1">Mật khẩu không chính xác</p>}
+                  </div>
+                  <button 
+                    type="submit"
+                    className="w-full bg-[#0b3a64] text-white font-bold py-3 rounded-xl hover:bg-blue-900 transition-colors"
+                  >
+                    Truy cập
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       </div>
     </AdminContext.Provider>

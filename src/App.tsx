@@ -788,7 +788,7 @@ const FreeResourcesSection = ({ onDownloadClick }: { onDownloadClick: () => void
         <h3 className="text-3xl md:text-5xl font-black text-[#0b3a64] tracking-tight">Cộng đồng & Chia sẻ</h3>
       </div>
       
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
         {/* Document Download Card */}
         <div className="bg-[#0b3a64] rounded-[2.5rem] p-8 md:p-12 text-white flex flex-col justify-between shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden group border border-[#0f4b82]">
           {/* Subtle animated background shapes */}
@@ -838,6 +838,32 @@ const FreeResourcesSection = ({ onDownloadClick }: { onDownloadClick: () => void
             className="bg-white text-[#c52b20] font-bold py-4 px-6 sm:px-8 rounded-2xl flex items-center justify-center gap-3 hover:bg-gray-50 transition-all shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] active:scale-95 w-fit relative z-10"
           >
             Xem trên YouTube <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+          </a>
+        </div>
+
+        {/* Zalo Group Card */}
+        <div className="bg-gradient-to-br from-[#0068ff] to-[#004bbd] rounded-[2.5rem] p-8 md:p-12 text-white flex flex-col justify-between shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-300/20 blur-3xl rounded-full transform group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+          
+          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-700 pointer-events-none">
+            <MessageCircle size={160} />
+          </div>
+          <div className="relative z-10 mb-8">
+            <span className="bg-white/20 text-white border border-white/20 text-[10px] sm:text-xs font-bold px-4 py-2 rounded-full tracking-widest uppercase mb-6 inline-flex items-center gap-2 backdrop-blur-md">
+              <MessageCircle size={14} className="text-white group-hover:animate-bounce" /> Cộng Đồng Zalo
+            </span>
+            <h3 className="text-3xl sm:text-4xl font-black mb-5 leading-tight tracking-tight">Cộng Đồng AI<br/>Xây Dựng</h3>
+            <p className="text-white/80 text-base sm:text-lg leading-relaxed max-w-md">
+              Tham gia nhóm Zalo để theo dõi các khóa học miễn phí, cập nhật kiến thức mới nhất và giao lưu cùng các kỹ sư trên toàn quốc.
+            </p>
+          </div>
+          <a 
+            href="https://zalo.me/g/tohfjq197" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white text-[#0068ff] font-bold py-4 px-6 sm:px-8 rounded-2xl flex items-center justify-center gap-3 hover:bg-gray-50 transition-all shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] active:scale-95 w-fit relative z-10"
+          >
+            Mở trên Zalo <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
           </a>
         </div>
       </div>

@@ -70,7 +70,12 @@ const Navbar = ({ onConsultClick }: { onConsultClick: () => void }) => {
 const AboutSection = ({ onConsultClick }: { onConsultClick: () => void }) => {
   const { isAdmin } = useAdmin();
   const [avatarImage, setAvatarImage] = useState(() => {
-    return localStorage.getItem('avatarImage') || '/Luat.png';
+    try {
+      const saved = localStorage.getItem('avatarImage');
+      return saved && saved.startsWith('data:image') ? saved : '/Luat.png';
+    } catch (e) {
+      return '/Luat.png';
+    }
   });
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -83,6 +88,10 @@ const AboutSection = ({ onConsultClick }: { onConsultClick: () => void }) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert("File quá lớn. Vui lòng chọn ảnh dưới 2MB.");
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
@@ -90,7 +99,8 @@ const AboutSection = ({ onConsultClick }: { onConsultClick: () => void }) => {
         try {
           localStorage.setItem('avatarImage', base64String);
         } catch (e) {
-          console.error("Local storage is full, please clear your browser or upload a smaller file.");
+          console.error("Local storage error:", e);
+          alert("Không thể lưu ảnh vào bộ nhớ trình duyệt vì vượt dung lượng cho phép.");
         }
       };
       reader.readAsDataURL(file);
@@ -116,6 +126,9 @@ const AboutSection = ({ onConsultClick }: { onConsultClick: () => void }) => {
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-[#0b3a64] leading-[1.1] tracking-tight whitespace-nowrap">
               NGUYỄN VĂN <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0b3a64] to-blue-500">LUẬT</span>
             </h1>
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold text-blue-600 italic tracking-wide">
+              "Kỹ Năng Giao Việc - Chìa Khóa biến AI thành Trợ Thủ"
+            </h3>
           </div>
           
           <div className="text-gray-600 md:text-lg leading-relaxed space-y-4 max-w-xl">
@@ -305,19 +318,21 @@ const ToolAISection = ({ onConsultClick }: { onConsultClick: () => void }) => {
 
         <div className="grid md:grid-cols-2 gap-8">
           {tools.map((tool) => (
-            <div 
+            <a 
               key={tool.title}
-              className="bg-white/5 backdrop-blur border border-white/10 p-10 rounded-[2.5rem] hover:bg-white/10 transition-all duration-300 flex flex-col group relative overflow-hidden cursor-pointer"
-              onClick={() => window.open(tool.url, '_blank', 'noopener,noreferrer')}
+              href={tool.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/5 backdrop-blur border border-white/10 p-10 rounded-[2.5rem] hover:bg-white/10 transition-all duration-300 flex flex-col group relative overflow-hidden"
             >
               <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-700 pointer-events-none">
                 {tool.icon}
               </div>
-              <div className="w-20 h-20 bg-blue-500/20 rounded-3xl flex items-center justify-center text-blue-400 mb-8 group-hover:scale-110 transition-transform relative z-10 pointer-events-none">
+              <div className="w-20 h-20 bg-blue-500/20 rounded-3xl flex items-center justify-center text-blue-400 mb-8 group-hover:scale-110 transition-transform relative z-10">
                 {tool.icon}
               </div>
-              <h4 className="text-2xl font-black text-white mb-4 relative z-10 pointer-events-none">{tool.title}</h4>
-              <p className="text-blue-100/70 text-lg leading-relaxed mb-10 flex-1 relative z-10 pointer-events-none">
+              <h4 className="text-2xl font-black text-white mb-4 relative z-10">{tool.title}</h4>
+              <p className="text-blue-100/70 text-lg leading-relaxed mb-10 flex-1 relative z-10">
                 {tool.desc}
               </p>
               <div 
@@ -325,7 +340,7 @@ const ToolAISection = ({ onConsultClick }: { onConsultClick: () => void }) => {
               >
                 Trải nghiệm AI ngay <ChevronRight size={20} />
               </div>
-            </div>
+            </a>
           ))}
         </div>
         

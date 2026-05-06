@@ -65,6 +65,21 @@ const Navbar = ({ onConsultClick }: { onConsultClick: () => void }) => {
 };
 
 const AboutSection = ({ onConsultClick }: { onConsultClick: () => void }) => {
+  const [avatarImage, setAvatarImage] = useState('/Luat.png');
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setAvatarImage(imageUrl);
+    }
+  };
+
   return (
     <section id="about" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 mb-32">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center min-h-[600px]">
@@ -166,16 +181,37 @@ const AboutSection = ({ onConsultClick }: { onConsultClick: () => void }) => {
             <div className="absolute inset-0 bg-gradient-to-tr from-blue-100/50 to-cyan-50/50 rounded-full transform -translate-x-3 -translate-y-3 md:-translate-x-6 md:-translate-y-6 scale-105"></div>
             
             {/* Image container */}
-            <div className="absolute inset-0 rounded-full border-8 border-white overflow-hidden shadow-2xl relative z-10 bg-gray-100 flex items-center justify-center text-gray-300">
-              <User size={80} strokeWidth={1} />
+            <div 
+              className="absolute inset-0 rounded-full border-8 border-white overflow-hidden shadow-2xl relative z-10 bg-gray-100 flex items-center justify-center text-gray-300 group cursor-pointer"
+              onClick={handleImageClick}
+            >
+              <img 
+                src={avatarImage} 
+                alt="Chuyên gia Quản lý Dự án & AI Nguyễn Văn Luật" 
+                className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
+              />
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-white font-medium text-sm text-center">Nhấn để<br/>cập nhật ảnh</span>
+              </div>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleImageChange} 
+                accept="image/*" 
+                className="hidden" 
+              />
             </div>
 
-            {/* Floating badge */}
+            {/* Floating badge 1 */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={{ y: [0, -10, 0] }}
               viewport={{ once: true }}
-              transition={{ delay: 0.6, duration: 0.4 }}
+              transition={{ 
+                y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                opacity: { delay: 0.6, duration: 0.4 },
+              }}
               className="absolute -bottom-6 -left-6 md:bottom-10 md:-left-12 bg-white p-4 md:p-5 rounded-2xl md:rounded-[2rem] shadow-xl z-20 flex items-center gap-4 hidden sm:flex border border-gray-50"
             >
               <div className="w-12 h-12 md:w-14 md:h-14 bg-blue-50 rounded-xl md:rounded-2xl flex items-center justify-center text-blue-600 shrink-0">
@@ -186,6 +222,27 @@ const AboutSection = ({ onConsultClick }: { onConsultClick: () => void }) => {
                 <p className="font-black text-[#0b3a64] text-sm md:text-base">Quản lý Dự án & AI</p>
               </div>
             </motion.div>
+
+            {/* Floating badge 2 */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              animate={{ y: [0, 8, 0] }}
+              viewport={{ once: true }}
+              transition={{ 
+                y: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 },
+                opacity: { delay: 0.8, duration: 0.4 },
+              }}
+              className="absolute -top-4 -right-2 md:top-8 md:-right-8 bg-white p-3 md:p-4 rounded-2xl shadow-xl z-20 flex items-center gap-3 border border-gray-50"
+            >
+              <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-500 shrink-0">
+                <ShieldCheck size={20} />
+              </div>
+              <div className="whitespace-nowrap">
+                <p className="font-black text-[#0b3a64] text-sm">15+ Năm</p>
+                <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">Kinh nghiệm</p>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       </div>
@@ -194,130 +251,58 @@ const AboutSection = ({ onConsultClick }: { onConsultClick: () => void }) => {
 };
 
 const ToolAISection = ({ onConsultClick }: { onConsultClick: () => void }) => {
-  const [activeCategory, setActiveCategory] = useState('Tất cả');
-
-  const categories = ['Tất cả', 'Quản lý', 'Tối ưu', 'Hỗ trợ'];
-
   const tools = [
     { 
-      title: "AI Phân tích Tiến độ", 
-      desc: "Dự báo rủi ro và tự động điều chỉnh tiến độ dự án dựa trên dữ liệu thực tế.", 
-      category: 'Quản lý',
-      icon: <BrainCircuit size={24} /> 
-    },
-    { 
-      title: "Playbook -BiD", 
-      desc: "Trợ giúp tra cứu pháp lý đấu thầu tức thì qua ngôn ngữ tự nhiên.", 
-      category: 'Hỗ trợ',
-      icon: <Zap size={24} />,
+      title: "Sổ tay số pháp lý (AI Legal)", 
+      desc: "Hệ thống tra cứu thông minh toàn bộ văn bản quy phạm pháp luật, nghị định, thông tư trong ngành xây dựng và đấu thầu.", 
+      icon: <Zap size={40} />,
       url: "https://playbot-bi-d.vercel.app/"
     },
     { 
-      title: "Tối ưu hóa Chi phí", 
-      desc: "Sử dụng ML để phát hiện các lãng phí và đề xuất phương án tiết kiệm ngân sách.", 
-      category: 'Tối ưu',
-      icon: <Check size={24} /> 
-    },
-    { 
-      title: "Dự báo Rủi ro Tiềm ẩn", 
-      desc: "Phân tích hàng triệu dữ liệu lịch sử để cảnh báo sớm các nguy cơ chậm trễ.", 
-      category: 'Quản lý',
-      icon: <Shield size={24} /> 
-    },
-    { 
-      title: "Tự động hóa Báo cáo", 
-      desc: "Tổng hợp dữ liệu hiện trường thành báo cáo trực quan trong tích tắc.", 
-      category: 'Tối ưu',
-      icon: <ArrowRight size={24} /> 
-    },
-    { 
-      title: "Trợ lý Kỹ thuật 24/7", 
-      desc: "Hỗ trợ giải đáp các thắc mắc kỹ thuật tại công trường theo thời gian thực.", 
-      category: 'Hỗ trợ',
-      icon: <Smartphone size={24} />,
+      title: "Sổ tay số chất lượng (AI Quality)", 
+      desc: "Trợ lý hỗ trợ giải đáp tức thời các tiêu chuẩn kỹ thuật, quy trình nghiệm thu và quản lý chất lượng tại công trường.", 
+      icon: <ShieldCheck size={40} />,
       url: "https://bot-qc-1.vercel.app/"
     }
   ];
 
-  const filteredTools = activeCategory === 'Tất cả' 
-    ? tools 
-    : tools.filter(t => t.category === activeCategory);
-
   return (
     <section id="tools" className="w-full bg-[#0b3a64] py-24 mb-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div className="max-w-2xl">
-            <h2 className="text-sm font-bold text-blue-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-              <span className="w-8 h-px bg-blue-400"></span> Công cụ AI độc quyền
-            </h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-white">Làm việc thông minh hơn với hệ sinh thái AI dành riêng cho kỹ thuật.</h3>
-          </div>
-
-          {/* Tab Navigation */}
-          <div className="flex bg-white/10 backdrop-blur-md p-1 rounded-2xl self-start md:self-auto">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 text-xs font-bold rounded-xl transition-all duration-300 relative ${activeCategory === cat ? 'text-[#0b3a64]' : 'text-blue-200 hover:text-white'}`}
-              >
-                <span className="relative z-10">{cat}</span>
-                {activeCategory === cat && (
-                  <motion.div 
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-white rounded-xl shadow-sm"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-              </button>
-            ))}
-          </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-16 text-center">
+          <h2 className="text-sm font-bold text-blue-400 uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+            <span className="w-8 h-px bg-blue-400"></span> Công cụ AI độc quyền <span className="w-8 h-px bg-blue-400"></span>
+          </h2>
+          <h3 className="text-3xl md:text-5xl font-black text-white tracking-tight">Hệ Sinh Thái Sổ Tay Số</h3>
         </div>
 
-        <motion.div 
-          layout
-          className="grid md:grid-cols-3 gap-8"
-        >
-          <AnimatePresence mode="popLayout">
-            {filteredTools.map((tool) => (
-              <motion.div 
-                layout
-                key={tool.title}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                whileHover={{ y: -10 }}
-                className="bg-white/5 backdrop-blur border border-white/10 p-8 rounded-[2rem] hover:bg-white/10 transition-all duration-300 flex flex-col group"
+        <div className="grid md:grid-cols-2 gap-8">
+          {tools.map((tool) => (
+            <div 
+              key={tool.title}
+              className="bg-white/5 backdrop-blur border border-white/10 p-10 rounded-[2.5rem] hover:bg-white/10 transition-all duration-300 flex flex-col group relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-700 pointer-events-none">
+                {tool.icon}
+              </div>
+              <div className="w-20 h-20 bg-blue-500/20 rounded-3xl flex items-center justify-center text-blue-400 mb-8 group-hover:scale-110 transition-transform relative z-10">
+                {tool.icon}
+              </div>
+              <h4 className="text-2xl font-black text-white mb-4 relative z-10">{tool.title}</h4>
+              <p className="text-blue-100/70 text-lg leading-relaxed mb-10 flex-1 relative z-10">
+                {tool.desc}
+              </p>
+              <a 
+                href={tool.url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="bg-blue-500 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 hover:bg-blue-400 transition-all active:scale-95 text-lg w-full relative z-10 shadow-lg shadow-blue-500/20"
               >
-                <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition-transform">
-                  {tool.icon}
-                </div>
-                <div className="mb-3">
-                  <span className="text-[10px] font-bold text-blue-300 uppercase tracking-tighter bg-blue-500/20 px-3 py-1 rounded-full border border-blue-500/20">{tool.category}</span>
-                </div>
-                <h4 className="text-xl font-bold text-white mb-3">{tool.title}</h4>
-                <p className="text-blue-100/70 text-sm leading-relaxed mb-6 flex-1">
-                  {tool.desc}
-                </p>
-                {tool.url ? (
-                  <a 
-                    href={tool.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="text-blue-400 font-bold text-sm flex items-center gap-1 hover:text-white hover:gap-2 transition-all"
-                  >
-                    Trải nghiệm ngay <ChevronRight size={16} />
-                  </a>
-                ) : (
-                  <button className="text-blue-400 font-bold text-sm flex items-center gap-1 hover:text-white hover:gap-2 transition-all">
-                    Trải nghiệm ngay <ChevronRight size={16} />
-                  </button>
-                )}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+                Trải nghiệm AI ngay <ChevronRight size={20} />
+              </a>
+            </div>
+          ))}
+        </div>
         
         <div className="mt-16 bg-white rounded-[2rem] p-8 md:p-12 text-[#0b3a64] flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
           <div className="max-w-xl">
@@ -373,27 +358,30 @@ const ELearningSection = ({ onSelectCourse }: { onSelectCourse: (course: any) =>
   ];
 
   return (
-    <section id="elearning" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-32 py-16">
-      <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
+    <section id="elearning" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-32 py-16 relative">
+      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl -z-10 pointer-events-none animate-pulse"></div>
+      
+      <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-12 relative z-10">
         <div className="max-w-2xl">
           <h2 className="text-sm font-bold text-[#00d0e6] uppercase tracking-widest mb-3 flex items-center gap-2">
             <span className="w-8 h-px bg-[#00d0e6]"></span> Học viện E-Learning
           </h2>
           <h3 className="text-3xl md:text-4xl font-bold text-[#0b3a64]">Trải nghiệm học tập thực chiến, giải quyết bài toán ngay trên lớp học.</h3>
         </div>
-        <button className="text-blue-600 font-bold flex items-center gap-2 hover:underline">
-          Xem tất cả khóa học <ArrowRight size={20} />
+        <button className="text-blue-600 font-bold flex items-center gap-2 hover:underline group">
+          Xem tất cả khóa học <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8">
+      <div className="grid md:grid-cols-3 gap-8 relative z-10">
         {courses.map((course, idx) => (
           <div 
             key={idx}
             onClick={() => onSelectCourse(course)}
-            className="group bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer flex flex-col"
+            className="group bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-blue-900/5 hover:-translate-y-2 transition-all duration-300 cursor-pointer flex flex-col relative"
           >
-            <div className="h-56 overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-blue-50/50 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-0" />
+            <div className="h-56 overflow-hidden relative z-10">
               <img 
                 src={course.img} 
                 alt={`Khóa học AI thực chiến: ${course.title}`} 
@@ -544,15 +532,22 @@ const CourseModal = ({ course, onClose }: { course: any; onClose: () => void }) 
               </div>
               
               <div className="bg-white p-6 rounded-[2rem] border-2 border-gray-100 shadow-xl inline-block w-full">
-                {/* Mock QR image */}
+                {/* Updated QR image */}
                 <div className="w-full aspect-square bg-[#FBFBFC] border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center mb-6 relative overflow-hidden group">
-                   <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="QR Code" className="w-4/5 h-4/5 opacity-80 mix-blend-multiply" />
-                   <div className="absolute inset-0 bg-blue-600/5 group-hover:bg-blue-600/0 transition-colors pointer-events-none" />
+                   <img src="/image_5.png" alt="VPBank QR Code" className="w-full h-full object-contain" />
                 </div>
                 <div className="text-sm text-gray-700 space-y-3 text-left">
                   <div className="flex justify-between items-center pb-2 border-b border-gray-50">
                     <span className="text-gray-500 font-medium">Số tiền:</span>
                     <span className="text-xl font-black text-blue-600">{course.price || "990.000"}đ</span>
+                  </div>
+                  <div className="flex justify-between items-center pb-2 border-b border-gray-50">
+                    <span className="text-gray-500 font-medium">Ngân hàng:</span>
+                    <span className="font-bold text-[#0b3a64]">VPBank</span>
+                  </div>
+                  <div className="flex justify-between items-center pb-2 border-b border-gray-50">
+                    <span className="text-gray-500 font-medium">Số tài khoản:</span>
+                    <span className="font-bold text-[#0b3a64]">274053208</span>
                   </div>
                   <div className="flex justify-between items-center pb-2 border-b border-gray-50">
                     <span className="text-gray-500 font-medium">Người nhận:</span>
@@ -753,6 +748,9 @@ const FreeResourcesSection = ({ onDownloadClick }: { onDownloadClick: () => void
       <div className="grid md:grid-cols-2 gap-8">
         {/* Document Download Card */}
         <div className="bg-[#0b3a64] rounded-[2.5rem] p-8 md:p-12 text-white flex flex-col justify-between shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden group border border-[#0f4b82]">
+          {/* Subtle animated background shapes */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/20 blur-3xl rounded-full transform group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+          
           <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-700 pointer-events-none">
             <Download size={160} />
           </div>
@@ -769,18 +767,21 @@ const FreeResourcesSection = ({ onDownloadClick }: { onDownloadClick: () => void
             onClick={onDownloadClick}
             className="bg-white text-[#0b3a64] font-bold py-4 px-6 sm:px-8 rounded-2xl flex items-center justify-center gap-3 hover:bg-gray-100 transition-all shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] active:scale-95 w-fit relative z-10"
           >
-            Tải File & Form Mẫu <Download size={20} />
+            Tải File & Form Mẫu <Download size={20} className="group-hover:-translate-y-1 transition-transform" />
           </button>
         </div>
 
         {/* Free Courses / Youtube Card */}
         <div className="bg-gradient-to-br from-[#ea4335] to-[#c52b20] rounded-[2.5rem] p-8 md:p-12 text-white flex flex-col justify-between shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden group">
+          {/* Subtle animated background shapes */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/20 blur-3xl rounded-full transform group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+          
           <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-700 pointer-events-none">
             <Youtube size={160} />
           </div>
           <div className="relative z-10 mb-8">
             <span className="bg-white/20 text-white border border-white/20 text-[10px] sm:text-xs font-bold px-4 py-2 rounded-full tracking-widest uppercase mb-6 inline-flex items-center gap-2 backdrop-blur-md">
-              <Youtube size={14} className="text-white" /> Video Bài Giảng
+              <Youtube size={14} className="text-white group-hover:animate-pulse" /> Video Bài Giảng
             </span>
             <h3 className="text-3xl sm:text-4xl font-black mb-5 leading-tight tracking-tight">Khóa Học AI<br/>Thực Chiến</h3>
             <p className="text-white/80 text-base sm:text-lg leading-relaxed max-w-md">
@@ -788,12 +789,12 @@ const FreeResourcesSection = ({ onDownloadClick }: { onDownloadClick: () => void
             </p>
           </div>
           <a 
-            href="https://youtube.com/@nguyenvanluat" 
+            href="https://www.youtube.com/@LuatNguyen40" 
             target="_blank"
             rel="noopener noreferrer"
             className="bg-white text-[#c52b20] font-bold py-4 px-6 sm:px-8 rounded-2xl flex items-center justify-center gap-3 hover:bg-gray-50 transition-all shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] active:scale-95 w-fit relative z-10"
           >
-            Xem trên YouTube <Youtube size={20} />
+            Xem trên YouTube <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
           </a>
         </div>
       </div>
@@ -976,9 +977,23 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBFBFC] font-sans selection:bg-blue-100 selection:text-blue-700 block">
+    <div className="min-h-screen bg-[#FBFBFC] font-sans selection:bg-blue-100 selection:text-blue-700 block relative overflow-hidden">
+      {/* Decorative Background Blobs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <motion.div 
+          animate={{ scale: [1, 1.1, 1], x: [0, 50, 0], y: [0, 30, 0] }} 
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[-10%] left-[-10%] w-[30rem] h-[30rem] bg-blue-200/30 rounded-full blur-3xl"
+        />
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], x: [0, -40, 0], y: [0, 50, 0] }} 
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute top-[20%] right-[-5%] w-[25rem] h-[25rem] bg-cyan-200/30 rounded-full blur-3xl"
+        />
+      </div>
+
       <Navbar onConsultClick={() => setIsConsultationOpen(true)} />
-      <main>
+      <main className="relative z-10">
         <AboutSection 
           onConsultClick={() => setIsConsultationOpen(true)} 
         />
